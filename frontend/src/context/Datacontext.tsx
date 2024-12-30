@@ -24,7 +24,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const getAllTasks = async () => {
         try {
-            const response = await fetch(`http://localhost:${port}/tasks`, {
+            const response = await fetch(`/tasks`, {
                 mode: "cors",
             });
             if (response.ok) {
@@ -40,7 +40,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     }
     const addTask = async (task: Task) => {
         try {
-            const response = await fetch(`http://localhost:${port}/add`, {
+            const response = await fetch(`/add`, {
                 mode: "cors",
                 method: "POST",
                 headers: {
@@ -63,12 +63,12 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const toggleDone = async (id: string) => {
         try {
-            const reponse = await fetch(`http://localhost:${port}/update/${id}`, {
+            const reponse = await fetch(`/update/${id}`, {
                 method: "PATCH",
                 mode: "cors"
             });
             if (reponse.ok) {
-                console.log("Reponse succesfully");
+                console.log("Reponse succesfully", port);
                 getAllTasks();
             } else {
                 console.log("Error while changing stats");
@@ -80,7 +80,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const deleteTask = async (id: string | undefined) => {
         try {
-            const response = await fetch(`http://localhost:${port}/delete/${id}`,
+            const response = await fetch(`/delete/${id}`,
                 {
                     mode: "cors",
                     method: "DELETE"
@@ -99,7 +99,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     const getTask = async (id: string | undefined): Promise<Task | null> => {
 
         try {
-            const response = await fetch(`http://localhost:${port}/task/${id}`, {
+            const response = await fetch(`/task/${id}`, {
                 mode: "cors"
             });
             if (response.ok) {

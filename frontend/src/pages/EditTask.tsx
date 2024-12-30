@@ -1,29 +1,38 @@
 import {MdOutlineKeyboardArrowLeft} from "react-icons/md";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Task} from "../types"
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useDataContext} from "../Hooks/Datahook.tsx";
-import * as dayjs from "dayjs";
 
 export default function AddEntry() {
     const navigate = useNavigate();
     const [task, setTask] = useState<Task>({
         name: "",
         description: "",
-        id: crypto.randomUUID(),
+        id: "",
         finished: false,
-        timeCreated: ""
+        timeCreated: "",
     });
 
-    const {getAllTasks, addTask} = useDataContext();
+    const {getAllTasks, addTask, deleteTask} = useDataContext();
+    const {id} = useParams<{ id: string }>();
+
+
+    useEffect(() => {
+        fetch(`http://localhost:5236/get/${id}`)
+            .then((response) => response.json())
+            .then((data) => setTask(data))
+            .catch((error) => console.error("Error fetching task:", error));
+    }, [id]);
 
     const handleButtonClick = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        setTask({...task, timeCreated: dayjs().format()});
+        await deleteTask(id);
         await addTask(task);
         navigate("/");
         await getAllTasks();
     }
+
 
     const handleTaskChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {name, value} = event.target;
@@ -46,24 +55,26 @@ export default function AddEntry() {
                 </button>
             </div>
             <form className="flex flex-col justify-center items-center gap-7 self-center w-full  ">
-                <p className="font-bold text-3xl">Add New Task</p>
+                <p className="font-bold text-3xl">Edit task</p>
                 <input
                     name="name"
-                    className="bg-transparent border w-1/3 rounded-2xl p-3 border-slate-600 focus:border-[#b624ff] hover:border-white outline-none"
+                    className="bg-transparent border w-1/3 rounded-2xl p-3 focus:border-[#b624ff] outline-none"
                     placeholder="Task Name*"
                     type="text"
                     onChange={handleTaskChange}
+                    value={task.name}
                 ></input>
                 <textarea
                     name="description"
-                    className="bg-transparent h-32 w-1/3 place-content-start border-slate-600 hover:border-white border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
+                    className="bg-transparent h-32 w-1/3 place-content-start border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
                     placeholder="Task Description"
                     onChange={handleTaskChange}
+                    value={task.description}
                 ></textarea>
                 <button
                     className="w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
                     onClick={handleButtonClick}
-                >Create Task
+                >Update Task
                 </button>
             </form>
         </div>

@@ -1,5 +1,6 @@
 import React, {createContext, useState} from "react";
 import {Task} from "../types.ts";
+import {isDev} from "../../Constants.ts";
 
 export interface DataContextType {
     data: Task[];
@@ -19,10 +20,11 @@ interface DataContextProviderProps {
 
 export const DataContextProvider: React.FC<DataContextProviderProps> = ({children}) => {
     const [data, setData] = useState<Task[]>([]);
+    const port = isDev() ? 5236 : 5000;
 
     const getAllTasks = async () => {
         try {
-            const response = await fetch("http://localhost:5236/tasks", {
+            const response = await fetch(`http://localhost:${port}/tasks`, {
                 mode: "cors",
             });
             if (response.ok) {
@@ -38,7 +40,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     }
     const addTask = async (task: Task) => {
         try {
-            const response = await fetch("http://localhost:5236/add", {
+            const response = await fetch(`http://localhost:${port}/add`, {
                 mode: "cors",
                 method: "POST",
                 headers: {
@@ -61,7 +63,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const toggleDone = async (id: string) => {
         try {
-            const reponse = await fetch(`http://localhost:5236/update/${id}`, {
+            const reponse = await fetch(`http://localhost:${port}/update/${id}`, {
                 method: "PATCH",
                 mode: "cors"
             });
@@ -78,7 +80,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const deleteTask = async (id: string | undefined) => {
         try {
-            const response = await fetch(`http://localhost:5236/delete/${id}`,
+            const response = await fetch(`http://localhost:${port}/delete/${id}`,
                 {
                     mode: "cors",
                     method: "DELETE"
@@ -97,7 +99,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     const getTask = async (id: string | undefined): Promise<Task | null> => {
 
         try {
-            const response = await fetch(`http://localhost:5236/task/${id}`, {
+            const response = await fetch(`http://localhost:${port}/task/${id}`, {
                 mode: "cors"
             });
             if (response.ok) {

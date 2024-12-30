@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && cp -r ./dist/*  ../WebApplication1/WebApplication1/wwwroot/",
+    "build": "tsc -b && vite build && cp -r ./dist/*  ../backend/WebApplication1/wwwroot/",
     "lint": "eslint .",
     "preview": "vite preview"
   },

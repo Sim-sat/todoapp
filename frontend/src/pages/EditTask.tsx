@@ -14,16 +14,15 @@ export default function AddEntry() {
         timeCreated: "",
     });
 
-    const {getAllTasks, addTask, deleteTask} = useDataContext();
+    const {getAllTasks, getTask, addTask, deleteTask} = useDataContext();
     const {id} = useParams<{ id: string }>();
 
 
     useEffect(() => {
-        fetch(`http://localhost:5236/get/${id}`)
-            .then((response) => response.json())
-            .then((data) => setTask(data))
-            .catch((error) => console.error("Error fetching task:", error));
-    }, [id]);
+        getTask(id).then(task => {
+            if (task !== null) setTask(task)
+        });
+    }, [getTask, id]);
 
     const handleButtonClick = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();

@@ -3,25 +3,34 @@ import {Task} from "../types.ts";
 import {useDataContext} from "../Hooks/Datahook.tsx";
 import React, {useEffect, useState} from "react";
 import {TaskList} from "../Components/TaskList.tsx";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import {buildStyles, CircularProgressbar} from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import ProgressProvider from "../Components/ProgressProvider.tsx";
 
 export default function Home() {
     const navigate = useNavigate();
-    const {data, setData, getAllTasks, addTask, toggleDone, deleteTask} = useDataContext();
+    const {data, getAllTasks, addTask, toggleDone, deleteTask} = useDataContext();
     const [percentage, setPercentage] = useState(50);
     useEffect(() => {
         getAllTasks();
+    }, []);
+
+
+    useEffect(() => {
         const finishedTasks = data.filter((entry) => entry.finished).length;
-        setPercentage(finishedTasks / data.length * 100);
-    }, [data, getAllTasks]);
+        if (data.length === 0) {
+            setPercentage(0);
+        } else {
+            const value = finishedTasks / data.length * 100;
+            setPercentage(Math.floor(value));
+        }
+    }, [data]);
 
     const handleTooltipAction = (event: React.MouseEvent<HTMLButtonElement>, task: Task) => {
         switch (event.currentTarget.name) {
             case "done":
-                setData(data.map((item) => ({...item, finished: true})));
+                toggleDone(task.id);
                 break;
             case "details":
                 navigate(`/tasks/${task.id}`);
@@ -48,7 +57,6 @@ export default function Home() {
             timeCreated: dayjs().format()
         };
         await addTask(newTask);
-        navigate("/");
         await getAllTasks();
     }
 

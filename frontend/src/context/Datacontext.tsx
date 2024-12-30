@@ -1,6 +1,5 @@
 import React, {createContext, useState} from "react";
 import {Task} from "../types.ts";
-import dayjs from "dayjs";
 
 export interface DataContextType {
     data: Task[];
@@ -9,6 +8,7 @@ export interface DataContextType {
     addTask: (task: Task) => Promise<void>;
     toggleDone: (id: string) => Promise<void>;
     deleteTask: (id: string | undefined) => Promise<void>;
+    getTask: (id: string | undefined) => Promise<Task | null>;
 }
 
 export const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -18,22 +18,16 @@ interface DataContextProviderProps {
 }
 
 export const DataContextProvider: React.FC<DataContextProviderProps> = ({children}) => {
-    const [data, setData] = useState<Task[]>([{
-        name: "first task",
-        description: "Das ist toll",
-        id: crypto.randomUUID(),
-        finished: false,
-        timeCreated: dayjs().format()
-    }]);
+    const [data, setData] = useState<Task[]>([]);
+
     const getAllTasks = async () => {
         try {
-            const response = await fetch("http://localhost:5236/get", {
+            const response = await fetch("http://localhost:5236/tasks", {
                 mode: "cors",
             });
             if (response.ok) {
                 const responseData = await response.json();
                 setData(responseData);
-                console.log(responseData);
             } else {
                 console.error("Fehler beim Senden des Tasks!", response.status, response.statusText);
                 alert("Fehler beim Senden des Tasks!");
@@ -100,8 +94,25 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
         }
     }
 
+    const getTask = async (id: string | undefined): Promise<Task | null> => {
+
+        try {
+            const response = await fetch(`http://localhost:5236/task/${id}`, {
+                mode: "cors"
+            });
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error("Fehler beim Laden des Tasks!");
+
+            }
+        } catch (error) {
+            console.error("Fehler bei der Verbindung:", error);
+        }
+        return null;
+    }
     return (
-        <DataContext.Provider value={{data, setData, getAllTasks, addTask, toggleDone, deleteTask}}>
+        <DataContext.Provider value={{data, setData, getAllTasks, addTask, toggleDone, deleteTask, getTask}}>
             {children}
         </DataContext.Provider>
     )

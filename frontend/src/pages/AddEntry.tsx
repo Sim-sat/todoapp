@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {Task} from "../types"
 import React, {useState} from "react";
 import {useDataContext} from "../Hooks/Datahook.tsx";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 export default function AddEntry() {
     const navigate = useNavigate();
@@ -19,8 +19,7 @@ export default function AddEntry() {
 
     const handleButtonClick = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        setTask({...task, timeCreated: dayjs().format()});
-        await addTask(task);
+        await addTask({...task, timeCreated: dayjs().format()});
         navigate("/");
         await getAllTasks();
     }

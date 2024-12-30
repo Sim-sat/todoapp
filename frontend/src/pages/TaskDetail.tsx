@@ -3,25 +3,26 @@ import {useEffect, useState} from "react";
 import {Task} from "../types.ts";
 import {MdOutlineCheckBox, MdOutlineCheckBoxOutlineBlank, MdOutlineKeyboardArrowLeft} from "react-icons/md";
 import dayjs from "dayjs";
+import {useDataContext} from "../Hooks/Datahook.tsx";
 
 export default function TaskDetail() {
     const {id} = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [task, setTask] = useState<Task>({
-        name: "first task",
-        description: "Das ist toll",
+        name: "",
+        description: "",
         id: crypto.randomUUID(),
         finished: false,
-        timeCreated: dayjs().format()
+        timeCreated: ""
     });
 
+    const {getTask} = useDataContext();
+
     useEffect(() => {
-        // Simuliere das Laden eines Tasks (z.B. API-Aufruf)
-        fetch(`http://localhost:5236/get/${id}`)
-            .then((response) => response.json())
-            .then((data) => setTask(data))
-            .catch((error) => console.error("Error fetching task:", error));
-    }, [id]);
+        getTask(id).then(task => {
+            if (task !== null) setTask(task)
+        });
+    }, [getTask, id]);
 
 
     return (

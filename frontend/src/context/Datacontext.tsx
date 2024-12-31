@@ -20,11 +20,11 @@ interface DataContextProviderProps {
 
 export const DataContextProvider: React.FC<DataContextProviderProps> = ({children}) => {
     const [data, setData] = useState<Task[]>([]);
-    const port = isDev() ? 5236 : 5000;
+    const url = isDev() ? "http://localhost:5236" : "";
 
     const getAllTasks = async () => {
         try {
-            const response = await fetch(`/tasks`, {
+            const response = await fetch(`${url}/tasks`, {
                 mode: "cors",
             });
             if (response.ok) {
@@ -40,7 +40,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     }
     const addTask = async (task: Task) => {
         try {
-            const response = await fetch(`/add`, {
+            const response = await fetch(`${url}/add`, {
                 mode: "cors",
                 method: "POST",
                 headers: {
@@ -63,12 +63,12 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const toggleDone = async (id: string) => {
         try {
-            const reponse = await fetch(`/update/${id}`, {
+            const reponse = await fetch(`${url}/update/${id}`, {
                 method: "PATCH",
                 mode: "cors"
             });
             if (reponse.ok) {
-                console.log("Reponse succesfully", port);
+                console.log("Reponse succesfully");
                 getAllTasks();
             } else {
                 console.log("Error while changing stats");
@@ -80,7 +80,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
     const deleteTask = async (id: string | undefined) => {
         try {
-            const response = await fetch(`/delete/${id}`,
+            const response = await fetch(`${url}/delete/${id}`,
                 {
                     mode: "cors",
                     method: "DELETE"
@@ -99,7 +99,7 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     const getTask = async (id: string | undefined): Promise<Task | null> => {
 
         try {
-            const response = await fetch(`/task/${id}`, {
+            const response = await fetch(`${url}/task/${id}`, {
                 mode: "cors"
             });
             if (response.ok) {

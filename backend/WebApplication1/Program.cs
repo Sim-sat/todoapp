@@ -1,6 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
 using Task = WebApplication1.Task;
-
+using Microsoft.Extensions.Configuration;
+using WebApplication1;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,13 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+var connectionString = builder.Configuration.GetConnectionString("AzureSqlConnection")
+    ?? throw new InvalidOperationException("Connection string 'AzureSqlConnection' not found.");;
+
+builder.Services.AddDbContext<TaskContext>(options => options.UseSqlServer(connectionString));
+
+
 var app = builder.Build();
 
 var tasks = new List<Task>();
@@ -27,51 +36,59 @@ var tasks = new List<Task>();
 
 app.UseCors("AllowAll");
 app.UseHttpsRedirection();
-app.MapPost("/add", (Task task) =>
+app.MapPost("/add", async (Task task, TaskContext context) =>
 {
     Console.WriteLine($"Name: {task.Name}, Description: {task.Description}, id: {task.id}, finished: {task.Finished} timeCreated: {task.timeCreated}");
     tasks.Add(task);
+    context.Tasks.Add(task);
+    await context.SaveChangesAsync();
+    
     return Results.Created($"{task.Name}", task);
 });
 
-app.MapGet("/tasks", () =>
+app.MapGet("/tasks", async (TaskContext context) =>
 {
-    return Results.Ok(tasks);
+    var taskList = await context.Tasks.ToListAsync();
+    return Results.Ok(taskList);
 });
 
-app.MapGet("/task/{id}", (string id) =>
+app.MapGet("/task/{id}", async (string id, TaskContext context) =>
 {
-    var task = tasks.FirstOrDefault(t => t.id == id);
-    if (task != null)
+    var task = await context.Tasks.FindAsync(id);
+
+    if (task == null)
     {
-        return Results.Json(task);
+        return Results.NotFound();
     }
-    return Results.NotFound("Task not found");
+    
+    return Results.Ok(task);
 });
 
-app.MapDelete("/delete/{id}", (string id) =>
+app.MapDelete("/delete/{id}", async (string id, TaskContext context) =>
 {
-    Console.WriteLine($"Will delete Id: {id}");
-    var task = tasks.FirstOrDefault(t => t.id == id);
-    if (task != null)
+    var task = context.Tasks.Find(id);
+    if (task == null)
     {
-        tasks.Remove(task);
-        return Results.Ok(tasks);
+        return Results.NotFound("Task not found");
     }
-    return Results.NotFound("Task not found");
+    context.Tasks.Remove(task);
+    await context.SaveChangesAsync();
+    return Results.NoContent();
 });
 
-app.MapPatch("/update/{id}", (string id) =>
+
+app.MapPatch("/update/{id}", async (string id, TaskContext context) =>
 {
-    var task = tasks.FirstOrDefault(t => t.id == id);
-    if (task != null)
+    var task = context.Tasks.Find(id);
+    if (task == null)
     {
-        task.Finished = !task.Finished;
-        return Results.Ok(task);
+        return Results.NotFound("Task not found");
     }
-    return Results.NotFound("Task not found");
+    task.Finished = !task.Finished;
+    context.Tasks.Update(task);
+    await context.SaveChangesAsync();
+    return Results.NoContent();
 });
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

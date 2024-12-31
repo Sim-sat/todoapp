@@ -1,5 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace WebApplication1
 {
+    public class TaskContext : DbContext
+    {
+        public TaskContext(DbContextOptions<TaskContext> options) : base(options)
+        {
+            
+        }
+        
+        public DbSet<Task> Tasks { get; set; }
+    }
+    
+    
     public class Task
     {
         public string Name { get; set; }

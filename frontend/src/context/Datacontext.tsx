@@ -33,7 +33,6 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
                 setData(responseData);
             } else {
                 console.error("Fehler beim Senden des Tasks!", response.status, response.statusText);
-                alert("Fehler beim Senden des Tasks!");
             }
         } catch (error) {
             console.error("Fehler bei der Verbindung:", error);
@@ -56,11 +55,9 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
                 console.log("Task erfolgreich gesendet:", responseData);
             } else {
                 console.error("Fehler beim Senden des Tasks:", response.status, response.statusText);
-                alert("Fehler beim Senden des Tasks!");
             }
         } catch (error) {
             console.error("Fehler bei der Verbindung:", error);
-            alert("Fehler bei der Anfrage.");
         }
     }
 

@@ -105,7 +105,7 @@ export default function Login() {
                         name="name"
                         className="bg-transparent border w-1/3 rounded-2xl p-3 border-slate-600 focus:border-[#b624ff] hover:border-white outline-none"
                         placeholder="Password"
-                        type="text"
+                        type="password"
                         onChange={(e) => setPassword(e.target.value)}
                         style={{borderColor: error ? "red" : ""}}
                     ></input>

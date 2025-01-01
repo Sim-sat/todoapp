@@ -38,7 +38,7 @@ export default function AddEntry() {
         <div className="mt-6">
             <div className="flex w-16 ml-32 gap-48 ">
                 <button
-                    className="flex justify-center items-center h-12 w-12 rounded-full hover:bg-[#384268]"
+                    className="flex justify-center items-center h-12 w-12 translate-x-32 rounded-full hover:bg-[#384268]"
                     onClick={() => navigate("/")}
                 >
                     <MdOutlineKeyboardArrowLeft className="text-6xl "/>

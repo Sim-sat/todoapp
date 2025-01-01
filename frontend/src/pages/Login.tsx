@@ -72,7 +72,7 @@ export default function Login() {
             <ToastContainer/>
             <div className="flex w-16 ml-32 gap-48">
                 <button
-                    className="flex justify-center items-center h-12 w-12 rounded-full hover:bg-[#384268]"
+                    className="flex justify-center items-center h-12 w-12 rounded-full translate-x-32 hover:bg-[#384268]"
                     onClick={() => navigate("/")}
                 >
                     <MdOutlineKeyboardArrowLeft className="text-6xl "/>

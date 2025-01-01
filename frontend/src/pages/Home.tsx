@@ -125,6 +125,14 @@ export default function Home() {
                         </div>
                     </div>
                 </Tooltip>
+                <Tooltip anchorSelect={"#mybutton"} place="left" clickable
+                         style={{zIndex: 9999}}
+                         openOnClick={true}
+                         defaultIsOpen={true}>
+                    <div className="flex flex-col gap-5 w-48">
+                        Log in to save tasks
+                    </div>
+                </Tooltip>
 
             </div>
             <div className="flex flex-col gap-5 items-center w-full mt-10  ">

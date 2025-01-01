@@ -1,4 +1,11 @@
-## Fullstack Todo App using React, asp.net core and MSSQL with CI/CD pipeline to Azure Web Service
+# Fullstack Todo App 
+
+Techstack:
+  - React + Typescript
+  - asp.net Core
+  - Microsoft SQL Server
+  - Azure Pipeline
+  - Azure App Service
 
 # [Live Preview](https://best-todo-app-hnbwf4e2d6creeh4.germanywestcentral-01.azurewebsites.net/ "Live Preview")
 
@@ -7,3 +14,4 @@
 - Register and Login to save data
 
 ## Screenshots
+![home](https://i.imgur.com/Dg40aCJ.png)

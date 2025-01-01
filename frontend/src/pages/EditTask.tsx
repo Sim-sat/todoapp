@@ -57,7 +57,7 @@ export default function AddEntry() {
                 <p className="font-bold text-3xl">Edit task</p>
                 <input
                     name="name"
-                    className="bg-transparent border w-1/3 rounded-2xl p-3 focus:border-[#b624ff] outline-none"
+                    className="max-w-[720px] bg-transparent border w-1/3 rounded-2xl p-3 focus:border-[#b624ff] outline-none"
                     placeholder="Task Name*"
                     type="text"
                     onChange={handleTaskChange}
@@ -65,13 +65,13 @@ export default function AddEntry() {
                 ></input>
                 <textarea
                     name="description"
-                    className="bg-transparent h-32 w-1/3 place-content-start border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
+                    className="max-w-[720px] bg-transparent h-32 w-1/3 place-content-start border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
                     placeholder="Task Description"
                     onChange={handleTaskChange}
                     value={task.description}
                 ></textarea>
                 <button
-                    className="w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
+                    className="max-w-[720px] w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
                     onClick={handleButtonClick}
                 >Update Task
                 </button>

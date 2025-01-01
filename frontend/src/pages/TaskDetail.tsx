@@ -33,7 +33,8 @@ export default function TaskDetail() {
             >
                 <MdOutlineKeyboardArrowLeft className="text-6xl "/>
             </button>
-            <div className="flex flex-col w-1/2  shadow-2xl shadow-black mt-32 gap-5 text-lg p-5 rounded-xl">
+            <div
+                className=" max-w-[720px] flex flex-col w-1/2  shadow-2xl shadow-black mt-32 gap-5 text-lg p-5 rounded-xl">
                 <h1 className="font-extrabold w-full text-center text-3xl mb-5">Task: {task.name}</h1>
                 <div className="flex w-full text-xl ">
                     <div className="flex-col flex items-start justify-start w-1/3 font-extrabold gap-6">

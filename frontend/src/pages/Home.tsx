@@ -7,14 +7,18 @@ import dayjs from "dayjs";
 import {buildStyles, CircularProgressbar} from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 import ProgressProvider from "../Components/ProgressProvider.tsx";
+import {FaRegUserCircle} from "react-icons/fa";
+import {MdLogout} from "react-icons/md";
+import {Tooltip} from "react-tooltip";
+import {isDev} from "../../Constants.ts";
+import {IoMdInformationCircleOutline} from "react-icons/io";
+import {toast, ToastContainer} from "react-toastify";
 
 export default function Home() {
     const navigate = useNavigate();
     const {data, getAllTasks, addTask, toggleDone, deleteTask} = useDataContext();
     const [percentage, setPercentage] = useState(50);
-    useEffect(() => {
-        getAllTasks();
-    }, []);
+    const url = isDev() ? "http://localhost:5236" : "";
 
 
     useEffect(() => {
@@ -26,6 +30,11 @@ export default function Home() {
             setPercentage(Math.floor(value));
         }
     }, [data]);
+
+    useEffect(() => {
+        getAllTasks();
+    }, []);
+
 
     const handleTooltipAction = (event: React.MouseEvent<HTMLButtonElement>, task: Task) => {
         switch (event.currentTarget.name) {
@@ -43,6 +52,7 @@ export default function Home() {
                 break;
             case "delete":
                 deleteTask(task.id);
+                toast.success("Task deleted!", {autoClose: 1000});
                 break;
             default:
                 break;
@@ -60,12 +70,66 @@ export default function Home() {
         await getAllTasks();
     }
 
+    const handleLogout = async () => {
+        sessionStorage.clear();
+
+        try {
+            const response = await fetch(`${url}/logout`, {
+                method: "POST",
+                credentials: 'include',
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({}),
+            });
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+        window.location.reload();
+    }
+
+
     return (
         <div className="flex flex-col items-center w-full h-screen">
-            <p className="font-bold text-6xl pt-5 text-slate-300">TODO LIST</p>
-            <div className="flex flex-col gap-5 items-center w-full mt-10 ">
+            <ToastContainer/>
+            <div className=" w-full justify-end pt-5  flex gap-24">
+                <button
+                    id="mybutton"
+                    className="flex justify-center items-center hover:scale-[1.05] transition duration-250 hover:bg-my-grey rounded-full h-24 w-24 text-5xl mb-8 mr-56 ">
+                    <FaRegUserCircle className="scale-[1.4]     bg-[#232e58] rounded-full "/>
+                </button>
+                <Tooltip anchorSelect={"#mybutton"} place="bottom" clickable
+                         style={{zIndex: 9999}}
+                         openOnClick={true}>
+                    <div className="flex flex-col gap-5 w-48">
+                        <button
+                            name="done"
+                            className="mr-10 flex gap-5 font-bold text-base hover:bg-[#38383c] w-full  pl-5 items-center h-12 rounded-xl "
+                            onClick={() => navigate("/user")}>
+                            <IoMdInformationCircleOutline
+                                className="scale-150 "/> User
+                        </button>
+                        <div className="flex flex-col gap-5 w-48">
+                            <button
+                                name="done"
+                                className="mr-10 flex gap-5 font-bold text-base hover:bg-[#38383c] w-full  pl-5 items-center h-12 rounded-xl "
+                                onClick={handleLogout}>
+                                <MdLogout
+                                    className="scale-150 text-red-500 "/> Logout
+                            </button>
+
+                        </div>
+                    </div>
+                </Tooltip>
+
+            </div>
+            <div className="flex flex-col gap-5 items-center w-full mt-10  ">
                 <div
-                    className="bg-[#1a2145] h-32 w-1/2 flex items-center justify-start pr-80 rounded-3xl border border-[#373c83] p-6 font-bold text-xl ">
+                    className="bg-[#1a2145] h-32 w-1/2 flex items-center justify-start pr-80 rounded-3xl border  max-w-[720px] border-[#373c83] p-6 font-bold text-xl ">
                     <ProgressProvider valueStart={0} valueEnd={percentage}>
                         {value =>
                             <CircularProgressbar value={value}
@@ -88,6 +152,7 @@ export default function Home() {
                     className="flex justify-center items-center hover:shadow-custom transition duration-250 rounded-full h-16 w-16 text-5xl p-3 mb-8 mr-56 bg-[#b624ff]">
                     +
                 </button>
+
             </form>
         </div>
     );

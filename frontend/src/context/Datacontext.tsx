@@ -21,11 +21,12 @@ interface DataContextProviderProps {
 export const DataContextProvider: React.FC<DataContextProviderProps> = ({children}) => {
     const [data, setData] = useState<Task[]>([]);
     const url = isDev() ? "http://localhost:5236" : "";
-
     const getAllTasks = async () => {
         try {
             const response = await fetch(`${url}/tasks`, {
                 mode: "cors",
+                method: "GET",
+                credentials: 'include',
             });
             if (response.ok) {
                 const responseData = await response.json();
@@ -45,7 +46,9 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "Accept": "application/json",
                 },
+                credentials: 'include',
                 body: JSON.stringify(task),
             });
             if (response.ok) {
@@ -65,7 +68,12 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
         try {
             const reponse = await fetch(`${url}/update/${id}`, {
                 method: "PATCH",
-                mode: "cors"
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                credentials: 'include',
             });
             if (reponse.ok) {
                 console.log("Reponse succesfully");
@@ -83,7 +91,12 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
             const response = await fetch(`${url}/delete/${id}`,
                 {
                     mode: "cors",
-                    method: "DELETE"
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                    },
+                    credentials: 'include',
                 });
             if (response.ok) {
                 console.log("Successfully deleted task");
@@ -100,7 +113,12 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
 
         try {
             const response = await fetch(`${url}/task/${id}`, {
-                mode: "cors"
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                credentials: 'include',
             });
             if (response.ok) {
                 return await response.json();

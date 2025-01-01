@@ -19,15 +19,15 @@ export const TaskList = (props: myProps): ReactNode => {
     return props.data.map((task: Task) => {
         return (
             <div key={task.id}
-                 className="w-1/2 h-20 bg-[#b624ff] hover:shadow-custom transition duration-250 rounded-full flex items-center pl-7 justify-between"
+                 className="max-w-[720px] w-1/2 h-20 bg-[#b624ff] hover:shadow-custom transition duration-250 rounded-full flex items-center pl-7 "
                  style={{backgroundColor: task.finished ? "#712299" : ""}}>
-                <p className="font-black text-xl flex gap-5 items-center"
+                <p className="font-black text-xl flex gap-5 items-center  w-1/2"
                    style={{
                        textDecoration: task.finished ? "line-through" : "none",
                        color: task.finished ? "rgb(34 197 94" : ""
                    }}>
                     {task.finished && <IoCheckmarkDone className="scale-150 text-green-500"/>}{task.name}</p>
-                <p className="ml-96">{dayjs(task.timeCreated).isSame(dayjs(), "week") ? `today, ${dayjs(task.timeCreated).format("HH:mm")}` : dayjs(task.timeCreated).format("DD:MM:YYYY")}</p>
+                <p className="ml-96 ">{dayjs(task.timeCreated).isSame(dayjs(), "week") ? `today, ${dayjs(task.timeCreated).format("HH:mm")}` : dayjs(task.timeCreated).format("DD:MM:YYYY")}</p>
                 <button
                     id={`tooltip-button-${task.id}`}
                     className="mr-10 flex justify-center items-center h-10 w-10 rounded-full hover:bg-[#bd39ff]">

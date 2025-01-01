@@ -22,5 +22,7 @@ namespace WebApplication1
         public bool Finished { get; set; }
         
         public string timeCreated { get; set; }
+        
+        public string userId { get; set; }
     }
 }

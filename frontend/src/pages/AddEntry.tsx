@@ -36,7 +36,7 @@ export default function AddEntry() {
 
     return (
         <div className="mt-6">
-            <div className="flex w-16 ml-32 gap-48">
+            <div className="flex w-16 ml-32 gap-48 ">
                 <button
                     className="flex justify-center items-center h-12 w-12 rounded-full hover:bg-[#384268]"
                     onClick={() => navigate("/")}
@@ -45,22 +45,22 @@ export default function AddEntry() {
                 </button>
             </div>
             <form className="flex flex-col justify-center items-center gap-7 self-center w-full  ">
-                <p className="font-bold text-3xl">Add New Task</p>
+                <p className="font-bold text-3xl max-w-[720px]">Add New Task</p>
                 <input
                     name="name"
-                    className="bg-transparent border w-1/3 rounded-2xl p-3 border-slate-600 focus:border-[#b624ff] hover:border-white outline-none"
+                    className="max-w-[720px] bg-transparent border w-1/3 rounded-2xl p-3 border-slate-600 focus:border-[#b624ff] hover:border-white outline-none"
                     placeholder="Task Name*"
                     type="text"
                     onChange={handleTaskChange}
                 ></input>
                 <textarea
                     name="description"
-                    className="bg-transparent h-32 w-1/3 place-content-start border-slate-600 hover:border-white border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
+                    className="max-w-[720px] bg-transparent h-32 w-1/3 place-content-start border-slate-600 hover:border-white border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
                     placeholder="Task Description"
                     onChange={handleTaskChange}
                 ></textarea>
                 <button
-                    className="w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
+                    className="w-1/3 max-w-[720px] h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
                     onClick={handleButtonClick}
                 >Create Task
                 </button>

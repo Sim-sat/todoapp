@@ -33,14 +33,13 @@ builder.Services.AddCors(options =>
 
 
 
-string keyVaultUrl = "https://todotresor2.vault.azure.net/";
-var credential = new DefaultAzureCredential();
-var secretClient = new SecretClient(new Uri(keyVaultUrl), credential);
-string secretName = "AzureSqlConnection";
-KeyVaultSecret connectionString = secretClient.GetSecret(secretName);
 
-builder.Services.AddDbContext<TaskContext>(options => options.UseSqlServer(connectionString.Value));
-builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString.Value));
+
+var connectionString = builder.Configuration.GetConnectionString("AzureSqlConnection")
+                       ?? throw new InvalidOperationException("Connection string 'AzureSqlConnection' not found.");;
+
+builder.Services.AddDbContext<TaskContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()

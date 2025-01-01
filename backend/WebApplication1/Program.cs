@@ -68,12 +68,15 @@ app.MapPost("/add", async (Task task, TaskContext context, HttpContext httpConte
     {
         task.userId = name;
     }
-    
+    else
+    {
+        task.userId = "user";
+    }
     context.Tasks.Add(task);
     await context.SaveChangesAsync();
     
     return Results.Created($"{task.Name}", task);
-}).RequireAuthorization();
+});
 
 app.MapGet("/tasks", async (TaskContext context, HttpContext httpContext) =>
 {
@@ -82,12 +85,15 @@ app.MapGet("/tasks", async (TaskContext context, HttpContext httpContext) =>
     Console.WriteLine($"Name: {name}");
     if (name == null)
     {
-        return Results.Unauthorized();
+        name = "user";
+        var defaultTaskList = await context.Tasks.Where(t => t.userId == name).ToListAsync();
+        return Results.Ok(defaultTaskList);
+        
     }
     
     var taskList = await context.Tasks.Where(t => t.userId == name).ToListAsync();
     return Results.Ok(taskList);
-}).RequireAuthorization();
+});
 
 
 app.MapGet("/task/{id}", async (string id, TaskContext context, HttpContext httpContext) =>
@@ -95,19 +101,24 @@ app.MapGet("/task/{id}", async (string id, TaskContext context, HttpContext http
     var name = httpContext.User.Identity?.Name;
     if (name == null)
     {
-        return Results.NotFound();
+        name = "user";
     }
     var task = await context.Tasks.Where(t => t.id == id && t.userId == name).FirstOrDefaultAsync();
+
+    if (task == null)
+    {
+        return Results.NotFound();
+    }
     
     return Results.Ok(task);
-}).RequireAuthorization();
+});
 
 app.MapDelete("/delete/{id}", async (string id, TaskContext context, HttpContext httpContext) =>
 {
     var name = httpContext.User.Identity?.Name;
     if (name == null)
     {
-        return Results.NotFound("Task not found");
+        name = "user";
     }
     var task = await context.Tasks.Where(t => t.id == id && t.userId == name).FirstOrDefaultAsync();
 
@@ -118,7 +129,7 @@ app.MapDelete("/delete/{id}", async (string id, TaskContext context, HttpContext
     context.Tasks.Remove(task);
     await context.SaveChangesAsync();
     return Results.NoContent();
-}).RequireAuthorization();
+});
 
 
 app.MapPatch("/update/{id}", async (string id, TaskContext context, HttpContext httpContext) =>
@@ -126,7 +137,7 @@ app.MapPatch("/update/{id}", async (string id, TaskContext context, HttpContext 
     var name = httpContext.User.Identity.Name;
     if (name == null)
     {
-        return Results.NotFound("Task not found");
+        name = "user";
     }
     var task = await context.Tasks.Where(t => t.id == id && t.userId == name).FirstOrDefaultAsync();
 
@@ -138,7 +149,7 @@ app.MapPatch("/update/{id}", async (string id, TaskContext context, HttpContext 
     context.Tasks.Update(task);
     await context.SaveChangesAsync();
     return Results.NoContent();
-}).RequireAuthorization();
+});
 
 app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
         [FromBody] object empty) =>

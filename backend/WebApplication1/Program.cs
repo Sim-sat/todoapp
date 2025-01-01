@@ -31,10 +31,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-
-
-
-
+var credential = new DefaultAzureCredential();
 var connectionString = builder.Configuration.GetConnectionString("AzureSqlConnection")
                        ?? throw new InvalidOperationException("Connection string 'AzureSqlConnection' not found.");;
 

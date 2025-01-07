@@ -13,13 +13,23 @@ import {Tooltip} from "react-tooltip";
 import {isDev} from "../../Constants.ts";
 import {IoMdInformationCircleOutline} from "react-icons/io";
 import {toast, ToastContainer} from "react-toastify";
+import {SpinningCircles} from 'react-loading-icons'
+
 
 export default function Home() {
     const navigate = useNavigate();
     const {data, getAllTasks, addTask, toggleDone, deleteTask} = useDataContext();
     const [percentage, setPercentage] = useState(50);
     const url = isDev() ? "http://localhost:5236" : "";
-
+    const [search, setSearch] = useState("");
+    const [loaded, setLoaded] = useState(false);
+    const [countdown, setCountdown] = useState(15);
+    const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<Record<string, boolean>>({
+        "🏠 Home": false,
+        "🏢 Work": false,
+        "👤 Personal": false
+    });
 
     useEffect(() => {
         const finishedTasks = data.filter((entry) => entry.finished).length;
@@ -31,8 +41,33 @@ export default function Home() {
         }
     }, [data]);
 
+
     useEffect(() => {
-        getAllTasks();
+        const fetchTasks = async () => {
+            try {
+                await getAllTasks(); // Versuche, die Daten zu laden
+                setLoaded(true); // Erfolgreich geladen
+                console.log("Tasks successfully loaded!");
+            } catch (error) {
+                console.error("Error fetching tasks:", error);
+                let countdown = 15; // Countdown-Wert
+                setCountdown(countdown); // Initialen Countdown-Wert setzen
+
+                const interval = setInterval(() => {
+                    countdown -= 1;
+                    setCountdown(countdown);
+
+                    if (countdown === 0) {
+                        clearInterval(interval); // Timer stoppen, wenn Countdown 0 erreicht
+                        window.location.reload(); // Seite neu laden
+                    }
+                }, 1000);
+
+                return () => clearInterval(interval);
+            }
+
+        }
+        fetchTasks();
     }, []);
 
 
@@ -92,6 +127,20 @@ export default function Home() {
         window.location.reload();
     }
 
+    const filterCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const value = e.currentTarget.name;
+        setSelectedCategory((prev) => ({
+            ...prev,
+            [value]: !prev[value],
+        }));
+        console.log(value);
+        setCategoryFilter((prev: string[]) =>
+            prev.includes(value)
+                ? prev.filter((item) => item !== value)
+                : [...prev, value]
+        );
+    };
+
 
     return (
         <div className="flex flex-col items-center w-full h-screen">
@@ -125,14 +174,14 @@ export default function Home() {
                         </div>
                     </div>
                 </Tooltip>
-                <Tooltip anchorSelect={"#mybutton"} place="left" clickable
-                         style={{zIndex: 9999}}
-                         openOnClick={true}
-                         defaultIsOpen={true}>
+                {!loaded && <Tooltip anchorSelect={"#mybutton"} place="left" clickable
+                                     style={{zIndex: 9999}}
+                                     openOnClick={true}
+                                     defaultIsOpen={true}>
                     <div className="flex flex-col gap-5 w-48">
                         Log in to save tasks
                     </div>
-                </Tooltip>
+                </Tooltip>}
 
             </div>
             <div className="flex flex-col gap-5 items-center w-full mt-10  ">
@@ -151,7 +200,51 @@ export default function Home() {
                     <p className=" h-24 min-w-72 text-center flex justify-center items-center">Finished {data.filter((item) => item.finished).length} out
                         of {data.length} tasks</p>
                 </div>
-                <TaskList data={data} handleTooltipAction={handleTooltipAction}></TaskList>
+                <input
+                    type="text"
+                    placeholder="Search for task..."
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="bg-[#1a2145] h-16 w-1/2 flex items-center justify-start pr-80 outline-0 rounded-3xl border  focus:border-[#373c83] outline-none max-w-[720px] border-[#373c83] p-6 ">
+                </input>
+                <div className="text-black flex gap-5">
+                    <button name="🏠 Home"
+                            className="bg-[#1fff44] p-1 border border-white px-3 rounded-xl hover:bg-[#1be53d]"
+                            style={{
+                                scale: selectedCategory["🏠 Home"] ? "1.1" : "1",
+                                borderColor: selectedCategory["🏠 Home"] ? "#b624ff " : "",
+                                borderWidth: selectedCategory["🏠 Home"] ? 3 : 1
+                            }}
+                            onClick={filterCategory}>🏠 Home
+                    </button>
+                    <button name="🏢 Work"
+                            className="bg-[#1fff44] p-1 border border-white px-3 rounded-xl hover:bg-[#1be53d]"
+                            style={{
+                                scale: selectedCategory["🏢 Work"] ? "1.1" : "1",
+                                borderColor: selectedCategory["🏢 Work"] ? "#b624ff " : "",
+                                borderWidth: selectedCategory["🏢 Work"] ? 3 : 1
+                            }}
+                            onClick={filterCategory}>🏢 Work
+                    </button>
+                    <button name="👤 Personal"
+                            style={{
+                                scale: selectedCategory["👤 Personal"] ? "1.1" : "1",
+                                borderColor: selectedCategory["👤 Personal"] ? "#b624ff " : "",
+                                borderWidth: selectedCategory["👤 Personal"] ? 3 : 1
+                            }}
+                            className="bg-[#1fff44] p-1 border border-white px-3 rounded-xl hover:bg-[#1be53d]"
+                            onClick={filterCategory}>👤 Personal
+                    </button>
+                </div>
+                {!loaded &&
+                    <>
+                        <div className="font-bold text-2xl">SQL Server needs time to start. Takes About 1 minute</div>
+                        <div>
+                            Retry in: {countdown}
+                            <SpinningCircles/>
+                        </div>
+                    </>}
+                <TaskList data={data} searchQuery={search} handleTooltipAction={handleTooltipAction}
+                          categoryFilter={categoryFilter}></TaskList>
             </div>
 
             <form className="flex w-full h-screen items-end justify-end">

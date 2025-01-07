@@ -22,20 +22,21 @@ export const DataContextProvider: React.FC<DataContextProviderProps> = ({childre
     const [data, setData] = useState<Task[]>([]);
     const url = isDev() ? "http://localhost:5236" : "";
     const getAllTasks = async () => {
-        try {
-            const response = await fetch(`${url}/tasks`, {
-                mode: "cors",
-                method: "GET",
-                credentials: 'include',
-            });
-            if (response.ok) {
-                const responseData = await response.json();
-                setData(responseData);
-            } else {
-                console.error("Fehler beim Senden des Tasks!", response.status, response.statusText);
-            }
-        } catch (error) {
-            console.error("Fehler bei der Verbindung:", error);
+
+        const response = await fetch(`${url}/tasks`, {
+            mode: "cors",
+            method: "GET",
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const responseData = await response.json();
+            setData(responseData);
+        } else if (response.status === 500) {
+            console.error("Status 500");
+            throw new Error("Sql need time to start");
+        } else {
+            console.error("Fehler beim Laden!", response.status, response.statusText);
+            throw new Error("Failed to fetch tasks");
         }
     }
     const addTask = async (task: Task) => {

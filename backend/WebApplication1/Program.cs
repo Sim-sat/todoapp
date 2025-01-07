@@ -52,13 +52,16 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 
 
-
 var app = builder.Build();
 
 app.UseAuthorization();
 
 app.UseCors("AllowSpecific Origin");
 app.UseHttpsRedirection();
+
+
+
+
 app.MapPost("/add", async (Task task, TaskContext context, HttpContext httpContext) =>
 {
 
@@ -83,16 +86,25 @@ app.MapGet("/tasks", async (TaskContext context, HttpContext httpContext) =>
     
     var name = httpContext.User.Identity?.Name;
     Console.WriteLine($"Name: {name}");
-    if (name == null)
+    try
     {
-        name = "user";
-        var defaultTaskList = await context.Tasks.Where(t => t.userId == name).ToListAsync();
-        return Results.Ok(defaultTaskList);
+      if (name == null)
+        {
+            name = "user";
+            var defaultTaskList = await context.Tasks.Where(t => t.userId == name).ToListAsync();
+            return Results.Ok(defaultTaskList);
         
+        }
+        var taskList = await context.Tasks.Where(t => t.userId == name).ToListAsync();
+        return Results.Ok(taskList);
+
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+        return Results.StatusCode(500);
     }
     
-    var taskList = await context.Tasks.Where(t => t.userId == name).ToListAsync();
-    return Results.Ok(taskList);
 });
 
 

@@ -3,6 +3,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Task} from "../types"
 import React, {useEffect, useState} from "react";
 import {useDataContext} from "../Hooks/Datahook.tsx";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 export default function AddEntry() {
     const navigate = useNavigate();
@@ -12,10 +14,12 @@ export default function AddEntry() {
         id: "",
         finished: false,
         timeCreated: "",
+        categories: []
     });
 
     const {getAllTasks, getTask, addTask, deleteTask} = useDataContext();
     const {id} = useParams<{ id: string }>();
+    const animatedComponents = makeAnimated();
 
 
     useEffect(() => {
@@ -43,6 +47,22 @@ export default function AddEntry() {
         )
     }
 
+    const handleChange = (selected: any) => {
+        // Extrahiere die Werte aus den ausgewählten Optionen
+        const values = selected ? selected.map((option: any) => option.value) : [];
+        setTask((prevTask) => ({
+            ...prevTask,
+            categories: values
+        }))
+    };
+
+    const options = [
+        {value: '🏠 Home', label: '🏠 Home'},
+        {value: '🏢 Work', label: '🏢 Work'},
+        {value: '👤 Personal', label: '👤 Personal'}
+    ]
+
+
     return (
         <div className="mt-6">
             <div className="flex w-16 ml-32 gap-48">
@@ -57,7 +77,7 @@ export default function AddEntry() {
                 <p className="font-bold text-3xl">Edit task</p>
                 <input
                     name="name"
-                    className="max-w-[720px] bg-transparent border w-1/3 rounded-2xl p-3 focus:border-[#b624ff] outline-none"
+                    className="max-w-[720px] bg-transparent border w-1/3 rounded-2xl p-3 border-slate-600 focus:border-[#b624ff] hover:border-white  outline-none"
                     placeholder="Task Name*"
                     type="text"
                     onChange={handleTaskChange}
@@ -65,11 +85,38 @@ export default function AddEntry() {
                 ></input>
                 <textarea
                     name="description"
-                    className="max-w-[720px] bg-transparent h-32 w-1/3 place-content-start border rounded-2xl p-2 focus:border-[#b624ff] outline-none"
+                    className="max-w-[720px] bg-transparent h-32 w-1/3 place-content-start border rounded-2xl p-2 border-slate-600 focus:border-[#b624ff] hover:border-white  outline-none"
                     placeholder="Task Description"
                     onChange={handleTaskChange}
                     value={task.description}
                 ></textarea>
+                <Select
+                    className="max-w-[720px] bg-transparent w-1/3 place-content-start rounded-2xl p-2 "
+                    closeMenuOnSelect={false}
+                    styles={{
+                        control: (baseStyles) => ({
+                            ...baseStyles,
+                            backgroundColor: "",
+                        }),
+                        menu: (baseStyles) => ({
+                            ...baseStyles,
+                            backgroundColor: "", // Hintergrund des Dropdown-Menüs transparent
+                        }),
+                        option: (baseStyles) => ({
+                            ...baseStyles,
+                            backgroundColor: '#232e58', // Hintergrund der Optionen transparent
+                            color: 'white',
+                            '&:hover': {
+                                backgroundColor: '#1f294f', // Option Hover Hintergrund
+                            },
+                        }),
+                    }}
+                    components={animatedComponents}
+                    isMulti
+                    options={options}
+                    onChange={handleChange}
+                    value={options.filter((option) => task.categories.includes(option.value))}
+                />
                 <button
                     className="max-w-[720px] w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
                     onClick={handleButtonClick}

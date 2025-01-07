@@ -24,5 +24,6 @@ namespace WebApplication1
         public string timeCreated { get; set; }
         
         public string userId { get; set; }
-    }
+        
+        public string[] Categories { get; set; } = Array.Empty<string>();    }
 }

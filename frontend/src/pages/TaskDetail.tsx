@@ -13,7 +13,8 @@ export default function TaskDetail() {
         description: "",
         id: crypto.randomUUID(),
         finished: false,
-        timeCreated: ""
+        timeCreated: "",
+        categories: []
     });
 
     const {getTask} = useDataContext();
@@ -42,6 +43,7 @@ export default function TaskDetail() {
                         <p className="h-5">Finished: </p>
                         <p className="h-5">ID: </p>
                         <p className="h-5">Created at: </p>
+                        <p className="h-5">Categories: </p>
 
                     </div>
                     <div className="flex-col flex items-start justify-start w-2/3 gap-6">
@@ -50,6 +52,12 @@ export default function TaskDetail() {
                             <MdOutlineCheckBoxOutlineBlank/>}</p>
                         <p className="h-5">{task.id}</p>
                         <p className="h-5">{dayjs(task.timeCreated).format("HH:mm DD.MM.YYYY")}</p>
+                        <p className="flex gap-5 text-black"
+                        >{task.categories.map((category: string) => <span
+                            className="bg-[#1fff44] p-1 border border-white px-3 rounded-xl"
+                            style={{filter: task.finished ? "brightness(0.75)" : "brightness(1)"}}
+                        >{category}</span>)}</p>
+
                     </div>
                 </div>
 

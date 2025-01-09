@@ -7,7 +7,7 @@ import {toast, ToastContainer} from "react-toastify";
 export default function Login() {
 
     const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>();
+    const [password, setPassword] = useState<string>("");
     const url = isDev() ? "http://localhost:5236" : "";
     const navigate = useNavigate();
     const [error, setError] = useState(false);
@@ -67,6 +67,14 @@ export default function Login() {
         }
     }
 
+    const isButtonDisabled =
+        !password.match(/[a-z]/) ||
+        !password.match(/[A-Z]/) ||
+        !password.match(/[0-9]/) ||
+        !password.match(/[^a-zA-Z0-9\s]/) ||
+        password.length < 6;
+
+
     return (
         <div className="mt-6">
             <ToastContainer/>
@@ -101,6 +109,7 @@ export default function Login() {
                         type="text"
                         onChange={(e) => setEmail(e.target.value)}
                     ></input>
+
                     <input
                         name="name"
                         className="bg-transparent border w-1/3 rounded-2xl p-3 border-slate-600 focus:border-[#b624ff] hover:border-white outline-none"
@@ -109,6 +118,13 @@ export default function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                         style={{borderColor: error ? "red" : ""}}
                     ></input>
+                    {!login && <div className="text-sm text-red-500 w-1/3">
+                        {!password.match(/[a-z]/) && <p>Must contain one lowercase letter</p>}
+                        {!password.match(/[A-Z]/) && <p>Must contain one uppercase letter</p>}
+                        {!password.match(/[0-9]/) && <p>Must contain one digit</p>}
+                        {!password.match(/[^a-zA-Z0-9\s]/) && <p>Must contain one non alphanumeric character</p>}
+                        {password.length < 6 && <p>Length must be at least 6 chracters</p>}
+                    </div>}
                     {error && <p className="text-red-500">Username or Password are wrong</p>}
                     {login ? <button
                             className="w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
@@ -116,8 +132,9 @@ export default function Login() {
                         >Login
                         </button> :
                         <button
-                            className="w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
+                            className="w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom  transition duration-250 bg-[#b624ff] disabled:hover:shadow-none disabled:grayscale-[0.5]"
                             onClick={handleRegister}
+                            disabled={isButtonDisabled}
                         >Register
                         </button>}
                 </form> :
@@ -127,8 +144,6 @@ export default function Login() {
                         <div className="flex w-full text-xl ">
                             <div className="flex-col flex items-start justify-start w-1/3 font-extrabold gap-6">
                                 <p className="h-5">Email: </p>
-
-
                             </div>
                             <div className="flex-col flex items-start justify-start w-2/3 gap-6">
                                 <p className="h-5">{sessionStorage.getItem("username")}</p>

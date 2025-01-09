@@ -118,8 +118,9 @@ export default function AddEntry() {
                     value={options.filter((option) => task.categories.includes(option.value))}
                 />
                 <button
-                    className="max-w-[720px] w-1/3  h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
+                    className="max-w-[720px] w-1/3 disabled:hover:shadow-none disabled:grayscale-[0.5] h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
                     onClick={handleButtonClick}
+                    disabled={task.name === ""}
                 >Update Task
                 </button>
             </form>

@@ -110,8 +110,9 @@ export default function AddEntry() {
                     onChange={handleChange}
                 />
                 <button
-                    className="w-1/3 max-w-[720px] h-20 text-2xl font-extrabold rounded-full hover:shadow-custom transition duration-250 bg-[#b624ff]"
+                    className="w-1/3 max-w-[720px] h-20 text-2xl font-extrabold rounded-full disabled:hover:shadow-none disabled:grayscale-[0.5] hover:shadow-custom transition duration-250 bg-[#b624ff]"
                     onClick={handleButtonClick}
+                    disabled={task.name === ""}
                 >Create Task
                 </button>
             </form>

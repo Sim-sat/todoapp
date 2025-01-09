@@ -206,7 +206,7 @@ export default function Home() {
                     onChange={(e) => setSearch(e.target.value)}
                     className="bg-[#1a2145] h-16 w-1/2 flex items-center justify-start pr-80 outline-0 rounded-3xl border  focus:border-[#373c83] outline-none max-w-[720px] border-[#373c83] p-6 ">
                 </input>
-                <div className="text-black flex gap-5">
+                {loaded && <div className="text-black flex gap-5">
                     <button name="🏠 Home"
                             className="bg-[#1fff44] p-1 border border-white px-3 rounded-xl hover:bg-[#1be53d]"
                             style={{
@@ -234,7 +234,7 @@ export default function Home() {
                             className="bg-[#1fff44] p-1 border border-white px-3 rounded-xl hover:bg-[#1be53d]"
                             onClick={filterCategory}>👤 Personal
                     </button>
-                </div>
+                </div>}
                 {!loaded &&
                     <>
                         <div className="font-bold text-2xl">SQL Server needs time to start. Takes About 1 minute</div>
